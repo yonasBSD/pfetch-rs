@@ -159,16 +159,9 @@ pub fn user_at_hostname(
 }
 
 pub fn memory(memory_readout: &MemoryReadout) -> Option<String> {
-    let total_memory = memory_readout.total();
-    let used_memory = memory_readout.used();
-    if total_memory.is_err() || used_memory.is_err() {
-        None
-    } else {
-        Some(format!(
-            "{}M / {}M",
-            used_memory.unwrap() / 1024,
-            total_memory.unwrap() / 1024
-        ))
+    match (memory_readout.total(), memory_readout.used()) {
+        (Ok(total), Ok(used)) => Some(format!("{}M / {}M", used / 1024, total / 1024)),
+        _ => None,
     }
 }
 
@@ -439,4 +432,3 @@ mod tests {
         assert_eq!(seconds_to_string(90060), "1d 1h 1m".to_string());
     }
 }
-
